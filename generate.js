@@ -46,7 +46,9 @@ function generate(opposingNetSums, netIdx, playerIdx, startingPlayer, free, matc
             generate(opposingNetSums, netIdx, (playerIdx+1)%2, i+1, free, matchup);
         }
         else {
-            let netSum = i+matchup[matchupIdx-1];
+            let p1Value = matchup[matchupIdx-1] === 8 ? 7 : matchup[matchupIdx-1];
+            let p2Value = i === 8 ? 7 : i;
+            let netSum = p1Value + p2Value;
             if (Math.abs(netSum-opposingNetSums[netIdx]) <= variance) {
                 generate(opposingNetSums, netIdx+1, (playerIdx+1)%2, 1, free, matchup);
             }
@@ -128,12 +130,14 @@ function sortPair(net) {
     return ""+b+a;
 }
 
+// 8's have the value 7
 function getSum(net) {
     let sum = 0;
     for (let i = 0; i < net.length; i++) {
         let c = net.charAt(i);
         if ('1' <= c && c <= '9') {
-            sum += parseInt(c);
+            let num = parseInt(c);
+            sum += num === 8 ? 7 : num;
         }
     }
     return sum;

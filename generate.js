@@ -9,12 +9,18 @@ function go() {
     let prev1 = document.getElementById("prev1").value;
     let prev2 = document.getElementById("prev2").value;
     let prev3 = document.getElementById("prev3").value;
-    let matchupSubs = getSubsFromInput(document.getElementById("subs").value);
+    let matchupSubs = document.getElementById("subs").value;
     let squadSizeElement = document.getElementById("squad-size");
     let squadSize = parseInt(squadSizeElement.options[squadSizeElement.selectedIndex].text);
     document.getElementById("results").innerHTML = "";
     document.getElementById("error-text").innerHTML = "";
-    
+    let [valid, error] = isValid(net1, net2, net3, prev1, prev2, prev3, matchupSubs);
+    if (!valid) {
+        document.getElementById("error-text").innerHTML = "Error: " + error;
+        return;
+    }
+    matchupSubs = getSubsFromInput(matchupSubs);
+ 
     opposingNetSums = [getSum(net1), getSum(net2), getSum(net3)];
     let free = new Array(squadSize+1).fill(true) // Don't use index 0
     generate(opposingNetSums, 0, 0, 1, free, new Array(opposingNetSums.length*2));
@@ -141,4 +147,37 @@ function getSum(net) {
         }
     }
     return sum;
+}
+
+function isValid(net1, net2, net3, prev1, prev2, prev3, subs) {
+    if (!isValidLengthAndNumeric(net1, 2) || !isValidLengthAndNumeric(net2, 2) || !isValidLengthAndNumeric(net3, 2)) {
+        return [false, "Enter 2 rankings per net, without spaces or commas (e.g. 25 for players 2 and 5)"];
+    }
+    if (!isValidLengthAndNumeric(prev1, 2, true) || !isValidLengthAndNumeric(prev2, 2, true) || !isValidLengthAndNumeric(prev3, 2, true)) {
+        return [false, "Enter 2 rankings per net, without spaces or commas (e.g. 25 for players 2 and 5). If this is the first round, your team's previous round rankings can be left blank."];
+    }
+    if (!isValidRangeAndNumeric(subs, 1, 2, true)) {
+        return [false, "Enter the ranking of the player(s) to sub this round, without spaces or commas"];
+    }
+    return [true, ""];
+}
+
+function isValidLengthAndNumeric(str, len, allowEmptyString) {
+    // Some fields can be left blank
+    if (str == null || str.length === 0) {
+        return allowEmptyString === true;
+    }
+    return str.length === len && isNumeric(str);
+}
+
+function isValidRangeAndNumeric(str, minLen, maxLen, allowEmptyString) {
+    // Some fields can be left blank
+    if (str == null || str.length === 0) {
+        return allowEmptyString === true;
+    }
+    return str.length >= minLen && str.length <= maxLen && isNumeric(str);
+}
+
+function isNumeric(str) {
+    return /^\d+$/.test(str);
 }

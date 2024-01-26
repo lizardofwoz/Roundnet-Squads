@@ -1,5 +1,5 @@
 let matchups = [];
-const variance = 3;
+let variance = 3;
 
 function go() {
     matchups = [];
@@ -12,12 +12,19 @@ function go() {
     let matchupSubs = document.getElementById("subs").value;
     let squadSizeElement = document.getElementById("squad-size");
     let squadSize = parseInt(squadSizeElement.options[squadSizeElement.selectedIndex].text);
+    let varianceInput = document.getElementById("variance").value;
     document.getElementById("results").innerHTML = "";
     document.getElementById("error-text").innerHTML = "";
-    let [valid, error] = isValid(net1, net2, net3, prev1, prev2, prev3, matchupSubs);
+    let [valid, error] = isValid(net1, net2, net3, prev1, prev2, prev3, matchupSubs, varianceInput);
     if (!valid) {
         document.getElementById("error-text").innerHTML = "Error: " + error;
         return;
+    }
+    if (varianceInput.length > 0) {
+        variance = parseInt(varianceInput);
+    }
+    else {
+        variance = 3;
     }
     matchupSubs = getSubsFromInput(matchupSubs);
  
@@ -149,7 +156,7 @@ function getSum(net) {
     return sum;
 }
 
-function isValid(net1, net2, net3, prev1, prev2, prev3, subs) {
+function isValid(net1, net2, net3, prev1, prev2, prev3, subs, variance) {
     if (!isValidLengthAndNumeric(net1, 2) || !isValidLengthAndNumeric(net2, 2) || !isValidLengthAndNumeric(net3, 2)) {
         return [false, "Enter 2 rankings per net, without spaces or commas (e.g. 25 for players 2 and 5)"];
     }
@@ -159,21 +166,24 @@ function isValid(net1, net2, net3, prev1, prev2, prev3, subs) {
     if (!isValidRangeAndNumeric(subs, 1, 2, true)) {
         return [false, "Enter the ranking of the player(s) to sub this round, without spaces or commas"];
     }
+    if (!isValidLengthAndNumeric(variance, 1, true)) {
+        return [false, "Variance must be a single-digit number (leave it blank for default variance)"];
+    }
     return [true, ""];
 }
 
-function isValidLengthAndNumeric(str, len, allowEmptyString) {
+function isValidLengthAndNumeric(str, len, optional) {
     // Some fields can be left blank
     if (str == null || str.length === 0) {
-        return allowEmptyString === true;
+        return optional === true;
     }
     return str.length === len && isNumeric(str);
 }
 
-function isValidRangeAndNumeric(str, minLen, maxLen, allowEmptyString) {
+function isValidRangeAndNumeric(str, minLen, maxLen, optional) {
     // Some fields can be left blank
     if (str == null || str.length === 0) {
-        return allowEmptyString === true;
+        return optional === true;
     }
     return str.length >= minLen && str.length <= maxLen && isNumeric(str);
 }

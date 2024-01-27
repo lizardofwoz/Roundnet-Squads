@@ -6,20 +6,24 @@
         <script src="generate.js"></script>
         <div>
             <p>Opposing Team</p>
-            <label>Net 1: </label><input id="net1"/><br />
-            <label>Net 2: </label><input id="net2"/><br />
-            <label>Net 3: </label><input id="net3"/><br />
+            <label for="net1">Net 1: </label><input id="net1"/><br />
+            <label for="net2">Net 2: </label><input id="net2"/><br />
+            <label for="net3">Net 3: </label><input id="net3"/><br />
             <p>Your Team</p>
             <label for="squad-size">Squad Size:</label>
             <select name="squad-size" id="squad-size">
                 <option value="squad7">7</option>
                 <option value="squad8">8</option>
             </select><br />
-            <label>Previous Round Net 1: </label><input id="prev1" /><br />
-            <label>Previous Round Net 2: </label><input id="prev2" /><br />
-            <label>Previous Round Net 3: </label><input id="prev3" /><br />
-            <label>Sub(s): </label><input id="subs"/><br />
-            <label>Variance: </label><input id="variance"/><br />
+            <label for="prev1">Previous Round Net 1: </label><input id="prev1" /><br />
+            <label for="prev2">Previous Round Net 2: </label><input id="prev2" /><br />
+            <label for="prev3">Previous Round Net 3: </label><input id="prev3" /><br />
+            <label for="subs">Sub(s): </label><input id="subs"/><br />
+            <label for="show-other-options">Show other options:</label><input type="checkbox" onClick="toggleOtherOptions()" id="show-other-options"><br />
+            <div id="other-options" style="display: none">
+                <label for="variance">Variance: </label><input id="variance"/><br />
+                <label for="value8as7">Value player #8 as 7:</label><input type="checkbox" id="value8as7"><br />
+            </div>
             <br />
             <button onClick="go()">Enter</button>
         </div>

@@ -1,5 +1,6 @@
 let matchups = [];
 let variance = 3;
+let value8As7 = false;
 
 function go() {
     matchups = [];
@@ -13,11 +14,12 @@ function go() {
     let squadSizeElement = document.getElementById("squad-size");
     let squadSize = parseInt(squadSizeElement.options[squadSizeElement.selectedIndex].text);
     let varianceInput = document.getElementById("variance").value;
+    value8As7 = document.getElementById("value8as7").checked;
     document.getElementById("results").innerHTML = "";
     document.getElementById("error-text").innerHTML = "";
     let [valid, error] = isValid(net1, net2, net3, prev1, prev2, prev3, matchupSubs, varianceInput);
     if (!valid) {
-        document.getElementById("error-text").innerHTML = "Error: " + error;
+        setError(error);
         return;
     }
     if (varianceInput.length > 0) {
@@ -32,6 +34,10 @@ function go() {
     let free = new Array(squadSize+1).fill(true) // Don't use index 0
     generate(opposingNetSums, 0, 0, 1, free, new Array(opposingNetSums.length*2));
     let list = filter(matchups, prev1, prev2, prev3, matchupSubs);
+    if (list.length === 0) {
+        setError("No possible match-ups. Increase the net variance.");
+        return;
+    }
     for (m of list) {
         let subs = getSubs(m, squadSize);
         let str = ""+m[0]+m[1] + ", " + m[2]+m[3] + ", " + m[4]+m[5] + "; Sub: " + subs;
@@ -39,6 +45,19 @@ function go() {
         let text = document.createTextNode(str);
         node.appendChild(text);
         document.getElementById("results").appendChild(node);
+    }
+}
+
+function setError(error) {
+    document.getElementById("error-text").innerHTML = "Error: " + error;
+}
+
+function toggleOtherOptions() {
+    if (document.getElementById("other-options").style.display === "none") {
+        document.getElementById("other-options").style.display = "block";
+    }
+    else {
+        document.getElementById("other-options").style.display = "none";
     }
 }
 
@@ -59,8 +78,9 @@ function generate(opposingNetSums, netIdx, playerIdx, startingPlayer, free, matc
             generate(opposingNetSums, netIdx, (playerIdx+1)%2, i+1, free, matchup);
         }
         else {
-            let p1Value = matchup[matchupIdx-1] === 8 ? 7 : matchup[matchupIdx-1];
-            let p2Value = i === 8 ? 7 : i;
+            // 8's can have the value 7 if that option is enabled
+            let p1Value = value8As7 && matchup[matchupIdx-1] === 8 ? 7 : matchup[matchupIdx-1];
+            let p2Value = value8As7 && i === 8 ? 7 : i;
             let netSum = p1Value + p2Value;
             if (Math.abs(netSum-opposingNetSums[netIdx]) <= variance) {
                 generate(opposingNetSums, netIdx+1, (playerIdx+1)%2, 1, free, matchup);
@@ -143,14 +163,14 @@ function sortPair(net) {
     return ""+b+a;
 }
 
-// 8's have the value 7
+// 8's can have the value 7 if that option is enabled
 function getSum(net) {
     let sum = 0;
     for (let i = 0; i < net.length; i++) {
         let c = net.charAt(i);
         if ('1' <= c && c <= '9') {
             let num = parseInt(c);
-            sum += num === 8 ? 7 : num;
+            sum += value8As7 && num === 8 ? 7 : num;
         }
     }
     return sum;

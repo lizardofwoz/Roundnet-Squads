@@ -1,6 +1,7 @@
 let matchups = [];
 let variance = 3;
 let value8As7 = false;
+let includeVariances = false;
 
 function go() {
     matchups = [];
@@ -15,6 +16,7 @@ function go() {
     let squadSizeElement = document.getElementById("squad-size");
     let squadSize = parseInt(squadSizeElement.options[squadSizeElement.selectedIndex].text);
     let varianceInput = document.getElementById("variance").value;
+    includeVariances = document.getElementById("includeVariances").checked;
     value8As7 = document.getElementById("value8as7").checked;
     document.getElementById("results").innerHTML = "";
     document.getElementById("error-text").innerHTML = "";
@@ -42,7 +44,14 @@ function go() {
     }
     for (m of list) {
         let subs = getSubs(m, squadSize);
-        let str = ""+m[0]+m[1] + ", " + m[2]+m[3] + ", " + m[4]+m[5] + "; Sub: " + subs;
+        let varianceStr = "";
+        if (includeVariances) {
+            let var1 = Math.abs(opposingNetSums[0]-getSum(""+m[0]+m[1]));
+            let var2 = Math.abs(opposingNetSums[1]-getSum(""+m[2]+m[3]));
+            let var3 = Math.abs(opposingNetSums[2]-getSum(""+m[4]+m[5]));
+            varianceStr = `; Variances: ${var1}, ${var2}, ${var3} `;
+        }
+        let str = ""+m[0]+m[1] + ", " + m[2]+m[3] + ", " + m[4]+m[5] + "; Sub: " + subs + varianceStr;
         let node = document.createElement("li");
         let text = document.createTextNode(str);
         node.appendChild(text);

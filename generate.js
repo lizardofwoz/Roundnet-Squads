@@ -11,13 +11,14 @@ function go() {
     let prev2 = document.getElementById("prev2").value;
     let prev3 = document.getElementById("prev3").value;
     let matchupSubs = document.getElementById("subs").value;
+    let matchupNonSubs = document.getElementById("required").value; // Required players (e.g. 12357)
     let squadSizeElement = document.getElementById("squad-size");
     let squadSize = parseInt(squadSizeElement.options[squadSizeElement.selectedIndex].text);
     let varianceInput = document.getElementById("variance").value;
     value8As7 = document.getElementById("value8as7").checked;
     document.getElementById("results").innerHTML = "";
     document.getElementById("error-text").innerHTML = "";
-    let [valid, error] = isValid(net1, net2, net3, prev1, prev2, prev3, matchupSubs, varianceInput);
+    let [valid, error] = isValid(net1, net2, net3, prev1, prev2, prev3, matchupSubs, matchupNonSubs, varianceInput);
     if (!valid) {
         setError(error);
         return;
@@ -28,14 +29,15 @@ function go() {
     else {
         variance = 3;
     }
-    matchupSubs = getSubsFromInput(matchupSubs);
+    matchupSubs = getPlayersFromInput(matchupSubs);
+    matchupNonSubs = getPlayersFromInput(matchupNonSubs);
  
-    opposingNetSums = [getSum(net1), getSum(net2), getSum(net3)];
+    let opposingNetSums = [getSum(net1), getSum(net2), getSum(net3)];
     let free = new Array(squadSize+1).fill(true) // Don't use index 0
     generate(opposingNetSums, 0, 0, 1, free, new Array(opposingNetSums.length*2));
-    let list = filter(matchups, prev1, prev2, prev3, matchupSubs);
+    let list = filter(matchups, prev1, prev2, prev3, matchupSubs, matchupNonSubs);
     if (list.length === 0) {
-        setError("No possible match-ups. Increase the net variance.");
+        setError("No possible match-ups. Change the requirements or increase the net variance.");
         return;
     }
     for (m of list) {
@@ -110,7 +112,7 @@ function getSubs(matchup, squadSize) {
     return subs;
 }
 
-function filter(list, prev1, prev2, prev3, matchupSubs) {
+function filter(list, prev1, prev2, prev3, matchupSubs, matchupNonSubs) {
     let badPairs = [];
     if (prev1.length === 2) {
         badPairs.push(sortPair(prev1));
@@ -136,6 +138,9 @@ function filter(list, prev1, prev2, prev3, matchupSubs) {
                 bad = true;
             }
         }
+        if (!matchupNonSubs.every(req => m.includes(req))) {
+            bad = true;
+        }
         if (!bad) {
             filtered.push(m);
         }
@@ -143,12 +148,13 @@ function filter(list, prev1, prev2, prev3, matchupSubs) {
     return filtered;
 }
 
-function getSubsFromInput(subsInput) {
-    let subs = [];
-    for (let i = 0; i < subsInput.length; i++) {
-        subs.push(parseInt(subsInput.charAt(i)));
+// E.g. "125" -> [1, 2, 5]
+function getPlayersFromInput(playersStr) {
+    let players = [];
+    for (let i = 0; i < playersStr.length; i++) {
+        players.push(parseInt(playersStr.charAt(i)));
     }
-    return subs;
+    return players;
 }
 
 function sortPair(net) {
@@ -176,7 +182,7 @@ function getSum(net) {
     return sum;
 }
 
-function isValid(net1, net2, net3, prev1, prev2, prev3, subs, variance) {
+function isValid(net1, net2, net3, prev1, prev2, prev3, subs, matchupNonSubs, variance) {
     if (!isValidLengthAndNumeric(net1, 2) || !isValidLengthAndNumeric(net2, 2) || !isValidLengthAndNumeric(net3, 2)) {
         return [false, "Enter 2 rankings per net, without spaces or commas (e.g. 25 for players 2 and 5)"];
     }
@@ -185,6 +191,9 @@ function isValid(net1, net2, net3, prev1, prev2, prev3, subs, variance) {
     }
     if (!isValidRangeAndNumeric(subs, 1, 2, true)) {
         return [false, "Enter the ranking of the player(s) to sub this round, without spaces or commas"];
+    }
+    if (!isValidRangeAndNumeric(matchupNonSubs, 1, 6, true)) {
+        return [false, "Enter the ranking of the player(s) that must play this round, without spaces or commas"];
     }
     if (!isValidLengthAndNumeric(variance, 1, true)) {
         return [false, "Variance must be a single-digit number (leave it blank for default variance)"];

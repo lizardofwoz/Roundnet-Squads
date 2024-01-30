@@ -57,6 +57,10 @@ function go() {
         node.appendChild(text);
         document.getElementById("results").appendChild(node);
     }
+    let countNode = document.createElement("p");
+    let text = document.createTextNode("Results: " + list.length);
+    countNode.appendChild(text);
+    document.getElementById("results").appendChild(countNode);
 }
 
 function setError(error) {

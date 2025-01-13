@@ -1,8 +1,4 @@
-Links:
-
-7 person squad: https://lizardofwoz.github.io/Roundnet-Squads
-
-8 person squad: https://lizardofwoz.github.io/Roundnet-Squads/squad8/
+Link: https://lizardofwoz.github.io/Roundnet-Squads
 
 Summary:
 

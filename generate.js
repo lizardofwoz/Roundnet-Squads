@@ -13,6 +13,7 @@ function go() {
     let prev3 = document.getElementById("prev3").value;
     let matchupSubs = document.getElementById("subs").value;
     let matchupNonSubs = document.getElementById("required").value; // Required players (e.g. 12357)
+    let pairsToAvoid = document.getElementById("avoid").value; // e.g. "14,52"
     let squadSizeElement = document.getElementById("squad-size");
     let squadSize = parseInt(squadSizeElement.options[squadSizeElement.selectedIndex].text);
     let varianceInput = document.getElementById("variance").value;
@@ -37,7 +38,7 @@ function go() {
     let opposingNetSums = [getSum(net1), getSum(net2), getSum(net3)];
     let free = new Array(squadSize+1).fill(true) // Don't use index 0
     generate(opposingNetSums, 0, 0, 1, free, new Array(opposingNetSums.length*2));
-    let list = filter(matchups, prev1, prev2, prev3, matchupSubs, matchupNonSubs);
+    let list = filter(matchups, prev1, prev2, prev3, pairsToAvoid, matchupSubs, matchupNonSubs);
     if (list.length === 0) {
         setError("No possible match-ups. Change the requirements or increase the net variance.");
         return;
@@ -125,7 +126,7 @@ function getSubs(matchup, squadSize) {
     return subs;
 }
 
-function filter(list, prev1, prev2, prev3, matchupSubs, matchupNonSubs) {
+function filter(list, prev1, prev2, prev3, pairsToAvoid, matchupSubs, matchupNonSubs) {
     let badPairs = [];
     if (prev1.length === 2) {
         badPairs.push(sortPair(prev1));
@@ -135,6 +136,12 @@ function filter(list, prev1, prev2, prev3, matchupSubs, matchupNonSubs) {
     }
     if (prev3.length === 2) {
         badPairs.push(sortPair(prev3));
+    }
+    if (pairsToAvoid.length > 0) {
+        let pairsToAvoidArr = pairsToAvoid.split(/, */);
+        for (pair of pairsToAvoidArr) {
+            badPairs.push(sortPair(pair));
+        }
     }
 
     let filtered = [];

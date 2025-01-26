@@ -14,6 +14,10 @@ function go() {
     let matchupSubs = document.getElementById("subs").value;
     let matchupNonSubs = document.getElementById("required").value; // Required players (e.g. 12357)
     let pairsToAvoid = document.getElementById("avoid").value; // e.g. "14,52"
+    let customization = {};
+    try {
+        customization = JSON.parse(document.getElementById("customization").value); // player names
+    } catch (error) {}
     let squadSizeElement = document.getElementById("squad-size");
     let squadSize = parseInt(squadSizeElement.options[squadSizeElement.selectedIndex].text);
     let varianceInput = document.getElementById("variance").value;
@@ -53,6 +57,10 @@ function go() {
             varianceStr = `; Variances: ${var1}, ${var2}, ${var3} `;
         }
         let str = ""+m[0]+m[1] + ", " + m[2]+m[3] + ", " + m[4]+m[5] + "; Sub: " + subs + varianceStr;
+        if ("names" in customization) {
+            let names = customization["names"];
+            str += ` ----> ${names[m[0]-1]}/${names[m[1]-1]}, ${names[m[2]-1]}/${names[m[3]-1]}, ${names[m[4]-1]}/${names[m[5]-1]}`;
+        }
         let node = document.createElement("li");
         let text = document.createTextNode(str);
         node.appendChild(text);

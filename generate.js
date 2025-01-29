@@ -47,29 +47,53 @@ function go() {
         setError("No possible match-ups. Change the requirements or increase the net variance.");
         return;
     }
+    let tableNode = document.createElement("table");
     for (m of list) {
         let subs = getSubs(m, squadSize);
-        let varianceStr = "";
+        let rowNode = document.createElement("tr");
+        let names = [];
+        if ("names" in customization) {
+            names = customization["names"];
+        }
+        for (let i = 0; i < 4; i++) {
+            let str = "";
+            if (i === 3) { // Sub column
+                str = subs;
+                if (subs.length === 1 && "names" in customization) {
+                    str += ` (${names[subs[0]-1]})`;
+                }
+            }
+            else {
+                str = ""+m[2*i]+m[2*i+1];
+                if ("names" in customization) {
+                    str += ` (${names[m[2*i]-1]}/${names[m[2*i+1]-1]})`;
+                }
+            }
+            let cellNode = createCellNode(str);
+            rowNode.appendChild(cellNode);
+        }
         if (includeVariances) {
             let var1 = Math.abs(opposingNetSums[0]-getSum(""+m[0]+m[1]));
             let var2 = Math.abs(opposingNetSums[1]-getSum(""+m[2]+m[3]));
             let var3 = Math.abs(opposingNetSums[2]-getSum(""+m[4]+m[5]));
-            varianceStr = `; Variances: ${var1}, ${var2}, ${var3} `;
+            let varianceStr = `Variances: ${var1}, ${var2}, ${var3}`;
+            let cellNode = createCellNode(varianceStr);
+            rowNode.appendChild(cellNode);
         }
-        let str = ""+m[0]+m[1] + ", " + m[2]+m[3] + ", " + m[4]+m[5] + "; Sub: " + subs + varianceStr;
-        if ("names" in customization) {
-            let names = customization["names"];
-            str += ` ----> ${names[m[0]-1]}/${names[m[1]-1]}, ${names[m[2]-1]}/${names[m[3]-1]}, ${names[m[4]-1]}/${names[m[5]-1]}`;
-        }
-        let node = document.createElement("li");
-        let text = document.createTextNode(str);
-        node.appendChild(text);
-        document.getElementById("results").appendChild(node);
+        tableNode.appendChild(rowNode);
     }
+    document.getElementById("results").appendChild(tableNode);
     let countNode = document.createElement("p");
     let text = document.createTextNode("Results: " + list.length);
     countNode.appendChild(text);
     document.getElementById("results").appendChild(countNode);
+}
+
+function createCellNode(str) {
+    let cellNode = document.createElement("td");
+    let cellText = document.createTextNode(str);
+    cellNode.appendChild(cellText);
+    return cellNode;
 }
 
 function swapNets(netA, netB) {

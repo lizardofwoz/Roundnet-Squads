@@ -42,7 +42,7 @@ function go() {
     let opposingNetSums = [getSum(net1), getSum(net2), getSum(net3)];
     let free = new Array(squadSize+1).fill(true) // Don't use index 0
     generate(opposingNetSums, 0, 0, 1, free, new Array(opposingNetSums.length*2));
-    let list = filter(matchups, prev1, prev2, prev3, pairsToAvoid, matchupSubs, matchupNonSubs);
+    let list = filter(matchups, prev1, prev2, prev3, pairsToAvoid, customization, matchupSubs, matchupNonSubs);
     if (list.length === 0) {
         setError("No possible match-ups. Change the requirements or increase the net variance.");
         return;
@@ -170,7 +170,7 @@ function getSubs(matchup, squadSize) {
     return subs;
 }
 
-function filter(list, prev1, prev2, prev3, pairsToAvoid, matchupSubs, matchupNonSubs) {
+function filter(list, prev1, prev2, prev3, pairsToAvoid, customization, matchupSubs, matchupNonSubs) {
     let badPairs = [];
     if (prev1.length === 2) {
         badPairs.push(sortPair(prev1));
@@ -183,6 +183,12 @@ function filter(list, prev1, prev2, prev3, pairsToAvoid, matchupSubs, matchupNon
     }
     if (pairsToAvoid.length > 0) {
         let pairsToAvoidArr = pairsToAvoid.split(/, */);
+        for (pair of pairsToAvoidArr) {
+            badPairs.push(sortPair(pair));
+        }
+    }
+    if ("pairsToAvoid" in customization) {
+        let pairsToAvoidArr = customization["pairsToAvoid"];
         for (pair of pairsToAvoidArr) {
             badPairs.push(sortPair(pair));
         }

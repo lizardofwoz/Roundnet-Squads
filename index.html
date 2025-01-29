@@ -6,9 +6,9 @@
         <script src="generate.js"></script>
         <div>
             <p>Opposing Team</p>
-            <label for="net1">Net 1: </label><input id="net1"/><br />
-            <label for="net2">Net 2: </label><input id="net2"/><br />
-            <label for="net3">Net 3: </label><input id="net3"/><br />
+            <label for="net1">Net 1: </label><input id="net1"></input><br />
+            <label for="net2">Net 2: </label><input id="net2"/><button onClick="swapNets(1, 2)">Swap Net 1 & 2</button><br />
+            <label for="net3">Net 3: </label><input id="net3"/><button onClick="swapNets(1, 3)">Swap Net 1 & 3</button><br />
             <p>Your Team</p>
             <label for="squad-size">Squad Size:</label>
             <select name="squad-size" id="squad-size">

@@ -72,6 +72,18 @@ function go() {
     document.getElementById("results").appendChild(countNode);
 }
 
+function swapNets(netA, netB) {
+    let net1 = document.getElementById("net1").value;
+    let net2 = document.getElementById("net2").value;
+    let net3 = document.getElementById("net3").value;
+    let vals = [net1, net2, net3];
+    let valA = vals[netA-1];
+    let valB = vals[netB-1];
+    let ids = ["net1", "net2", "net3"];
+    document.getElementById(ids[netB-1]).value = valA;
+    document.getElementById(ids[netA-1]).value = valB;
+}
+
 function setError(error) {
     document.getElementById("error-text").innerHTML = "Error: " + error;
 }

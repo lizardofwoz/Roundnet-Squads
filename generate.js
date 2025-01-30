@@ -48,6 +48,16 @@ function go() {
         return;
     }
     let tableNode = document.createElement("table");
+    let headerRowNode = document.createElement("tr");
+    for (let i = 0; i < 3; i++) {
+        let headerCellNode = createCellNode("Net " + (i+1), true);
+        headerRowNode.appendChild(headerCellNode);
+    }
+    headerRowNode.appendChild(createCellNode("Sub", true));
+    if (includeVariances) {
+        headerRowNode.appendChild(createCellNode("Variances", true));
+    }
+    tableNode.appendChild(headerRowNode);
     for (m of list) {
         let subs = getSubs(m, squadSize);
         let rowNode = document.createElement("tr");
@@ -69,15 +79,15 @@ function go() {
                     str += ` (${names[m[2*i]-1]}/${names[m[2*i+1]-1]})`;
                 }
             }
-            let cellNode = createCellNode(str);
+            let cellNode = createCellNode(str, false);
             rowNode.appendChild(cellNode);
         }
         if (includeVariances) {
             let var1 = Math.abs(opposingNetSums[0]-getSum(""+m[0]+m[1]));
             let var2 = Math.abs(opposingNetSums[1]-getSum(""+m[2]+m[3]));
             let var3 = Math.abs(opposingNetSums[2]-getSum(""+m[4]+m[5]));
-            let varianceStr = `Variances: ${var1}, ${var2}, ${var3}`;
-            let cellNode = createCellNode(varianceStr);
+            let varianceStr = `${var1}, ${var2}, ${var3}`;
+            let cellNode = createCellNode(varianceStr, false);
             rowNode.appendChild(cellNode);
         }
         tableNode.appendChild(rowNode);
@@ -89,8 +99,8 @@ function go() {
     document.getElementById("results").appendChild(countNode);
 }
 
-function createCellNode(str) {
-    let cellNode = document.createElement("td");
+function createCellNode(str, isHeader) {
+    let cellNode = document.createElement(isHeader ? "th" : "td");
     let cellText = document.createTextNode(str);
     cellNode.appendChild(cellText);
     return cellNode;

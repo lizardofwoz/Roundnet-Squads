@@ -1,34 +1,39 @@
 <html>
     <head>
         <title>Match-up Generator</title>
+        <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <script src="generate.js"></script>
         <div>
-            <p>Opposing Team</p>
-            <label for="net1">Net 1: </label><input id="net1"></input><br />
-            <label for="net2">Net 2: </label><input id="net2"/><button onClick="swapNets(1, 2)">Swap Net 1 & 2</button><br />
-            <label for="net3">Net 3: </label><input id="net3"/><button onClick="swapNets(1, 3)">Swap Net 1 & 3</button><br />
-            <p>Your Team</p>
-            <label for="squad-size">Squad Size:</label>
-            <select name="squad-size" id="squad-size">
-                <option value="squad7">7</option>
-                <option value="squad8">8</option>
-            </select><br />
-            <label for="prev1">Previous Round Net 1: </label><input id="prev1" /><br />
-            <label for="prev2">Previous Round Net 2: </label><input id="prev2" /><br />
-            <label for="prev3">Previous Round Net 3: </label><input id="prev3" /><br />
-            <label for="subs">Sub(s): </label><input id="subs"/><br />
-            <label for="required">Required players: </label><input id="required"/><br />
-            <label for="avoid">Pairs to avoid: </label><input id="avoid"/><br />
-            <label for="customization">Customization: </label><input id="customization"/><br />
-            <label for="show-other-options">Show other options:</label><input type="checkbox" onClick="toggleOtherOptions()" id="show-other-options"><br />
-            <div id="other-options" style="display: none">
-                <label for="variance">Variance: </label><input id="variance"/><br />
-                <label for="includeVariances">Include net variances in results:</label><input type="checkbox" id="includeVariances"><br />
-                <label for="value8as7">Value player #8 as 7:</label><input type="checkbox" id="value8as7"><br />
+            <h2>Opposing Team</h2>
+            <div>
+                <label for="net1">Net 1: </label><input id="net1"></input><br />
+                <label for="net2">Net 2: </label><input id="net2"/><button onClick="swapNets(1, 2)">Swap Net 1 & 2</button><br />
+                <label for="net3">Net 3: </label><input id="net3"/><button onClick="swapNets(1, 3)">Swap Net 1 & 3</button><br />
             </div>
-            <br />
+            <h2>Your Team</h2>
+            <div>
+                <label for="prev1">Previous Round Net 1: </label><input id="prev1" /><br />
+                <label for="prev2">Previous Round Net 2: </label><input id="prev2" /><br />
+                <label for="prev3">Previous Round Net 3: </label><input id="prev3" /><br />
+                <label for="subs">Sub(s): </label><input id="subs"/><br />
+                <label for="required">Required players: </label><input id="required"/><br />
+                <label for="avoid">Pairs to avoid: </label><input id="avoid"/><br />
+                <label for="customization">Customization: </label><input id="customization"/><br />
+                <label for="show-other-options">Show other options:</label><input type="checkbox" onClick="toggleOtherOptions()" id="show-other-options"><br />
+                <div id="other-options" style="display: none">
+                    <label for="variance">Variance: </label><input id="variance"/><br />
+                    <label for="includeVariances">Include net variances in results:</label><input type="checkbox" id="includeVariances"><br />
+                    <label for="squad-size">Squad Size:</label>
+                    <select name="squad-size" id="squad-size">
+                        <option value="squad7">7</option>
+                        <option value="squad8">8</option>
+                    </select><br />
+                    <label for="value8as7">Value player #8 as 7:</label><input type="checkbox" id="value8as7"><br />
+                </div>
+                <br />
+            </div>
             <button onClick="go()">Enter</button>
         </div>
         <p id="error-text" style="color:red;"></p>
